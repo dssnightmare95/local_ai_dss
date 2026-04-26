@@ -1,0 +1,29 @@
+services:
+  ollama-download:
+    image: ollama/ollama:latest
+    container_name: gemma4-local-ollama-download
+    restart: unless-stopped
+    volumes:
+      - ollama-data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  pull-model:
+    image: ollama/ollama:latest
+    container_name: gemma4-local-pull-model
+    depends_on:
+      ollama-download:
+        condition: service_healthy
+    environment:
+      OLLAMA_HOST: http://ollama-download:11434
+    volumes:
+      - ollama-data:/root/.ollama
+    command: ["pull", "${OLLAMA_MODEL:-gemma4:e2b}"]
+    restart: "no"
+
+volumes:
+  ollama-data:
