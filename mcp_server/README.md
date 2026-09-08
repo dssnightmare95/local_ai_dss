@@ -48,6 +48,7 @@ protocol to it.
 The current filesystem tools are read-only. They do not modify workspace files,
 skip protected paths, and `read_file` enforces the configured file-size limit.
 
+
 ## Workspace security policy
 
 The server now has a reusable filesystem boundary for future tools:

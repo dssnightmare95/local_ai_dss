@@ -4,3 +4,7 @@ gemma4_local/ollama-data/
 mcp_server/.venv/
 mcp_server/**/__pycache__/
 mcp_server/*.egg-info/
+
+local_agent/.venv/
+local_agent/**/__pycache__/
+local_agent/*.egg-info/

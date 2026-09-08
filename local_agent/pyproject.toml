@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "local-ai-agent"
+version = "0.1.0"
+description = "Local agent that consumes MCP servers and will connect to Ollama"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=2.0.0,<3",
+]
+
+[project.scripts]
+local-ai-agent = "local_ai_agent.client:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
