@@ -42,3 +42,17 @@ protocol to it.
 
 The server deliberately does not read or modify workspace files yet. Those
 permissions will be added in separate steps.
+
+## Workspace security policy
+
+The server now has a reusable filesystem boundary for future tools:
+
+- `LOCAL_AI_WORKSPACE_ROOT`: allowed workspace root. Defaults to the process
+  working directory; hosts should set this explicitly.
+- `LOCAL_AI_MAX_FILE_BYTES`: maximum file size for future reads. Defaults to
+  `1048576` bytes.
+
+The policy rejects absolute paths, path traversal outside the root, symlinks
+that resolve outside the root, common dependency/build directories, dotenv
+files, and private-key file extensions. Future filesystem tools must call
+`WorkspacePolicy.resolve_path()` before accessing a path.

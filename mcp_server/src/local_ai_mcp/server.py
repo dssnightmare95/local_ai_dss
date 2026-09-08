@@ -6,6 +6,8 @@ Keep stdout reserved for the MCP protocol; diagnostic messages belong in logs.
 
 from mcp.server import MCPServer
 
+from .security import WorkspacePolicy
+
 
 mcp = MCPServer(
     "local-ai-mcp",
@@ -15,6 +17,10 @@ mcp = MCPServer(
         "connectivity check; filesystem tools will be added incrementally."
     ),
 )
+
+# Central policy used by all future filesystem tools.
+# The current server does not expose a filesystem tool yet.
+workspace_policy = WorkspacePolicy.from_environment()
 
 
 @mcp.tool()
