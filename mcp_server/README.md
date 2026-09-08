@@ -42,9 +42,11 @@ protocol to it.
 - `workspace_info()`: returns the active workspace root and security limits.
 - `list_files(path?, recursive?, max_entries?)`: lists allowed workspace files
   and directories using relative paths.
+- `read_file(path, encoding?)`: reads one allowed text file and returns its
+  content and metadata.
 
-The current filesystem tools are read-only. They do not modify workspace files
-and skip protected paths.
+The current filesystem tools are read-only. They do not modify workspace files,
+skip protected paths, and `read_file` enforces the configured file-size limit.
 
 ## Workspace security policy
 

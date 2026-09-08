@@ -3,7 +3,11 @@ import unittest
 from pathlib import Path
 
 from local_ai_mcp.security import WorkspacePolicy, WorkspaceSecurityError
-from local_ai_mcp.workspace import list_workspace_files, workspace_info
+from local_ai_mcp.workspace import (
+    list_workspace_files,
+    read_workspace_file,
+    workspace_info,
+)
 
 
 class WorkspaceToolsTests(unittest.TestCase):
@@ -42,6 +46,22 @@ class WorkspaceToolsTests(unittest.TestCase):
     def test_list_files_limits_results(self) -> None:
         result = list_workspace_files(self.policy, recursive=True, max_entries=1)
         self.assertEqual(len(result), 1)
+
+    def test_read_file_returns_text_and_metadata(self) -> None:
+        result = read_workspace_file(self.policy, "src/main.py")
+        self.assertEqual(result["path"], "src/main.py")
+        self.assertEqual(result["content"], "print('ok')")
+        self.assertEqual(result["encoding"], "utf-8")
+
+    def test_read_file_rejects_protected_file(self) -> None:
+        with self.assertRaises(WorkspaceSecurityError):
+            read_workspace_file(self.policy, ".git/config")
+
+    def test_read_file_rejects_binary_content(self) -> None:
+        binary_path = self.root / "image.bin"
+        binary_path.write_bytes(b"\xff\xfe\x00")
+        with self.assertRaises(WorkspaceSecurityError):
+            read_workspace_file(self.policy, "image.bin")
 
 
 if __name__ == "__main__":

@@ -7,7 +7,11 @@ Keep stdout reserved for the MCP protocol; diagnostic messages belong in logs.
 from mcp.server import MCPServer
 
 from .security import WorkspacePolicy
-from .workspace import list_workspace_files, workspace_info as build_workspace_info
+from .workspace import (
+    list_workspace_files,
+    read_workspace_file,
+    workspace_info as build_workspace_info,
+)
 
 
 mcp = MCPServer(
@@ -51,6 +55,17 @@ def list_files(
         path=path,
         recursive=recursive,
         max_entries=max_entries,
+    )
+
+
+@mcp.tool()
+def read_file(path: str, encoding: str = "utf-8") -> dict:
+    """Read one allowed text file using a workspace-relative path."""
+
+    return read_workspace_file(
+        workspace_policy,
+        path,
+        encoding=encoding,
     )
 
 

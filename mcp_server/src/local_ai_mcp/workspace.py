@@ -83,3 +83,31 @@ def list_workspace_files(
             entries.append(item)
 
     return entries
+
+
+def read_workspace_file(
+    policy: WorkspacePolicy,
+    path: str,
+    *,
+    encoding: str = "utf-8",
+) -> dict[str, Any]:
+    """Read one allowed text file from the workspace."""
+
+    resolved = policy.resolve_path(path, must_exist=True, expect_file=True)
+    policy.validate_file_size(resolved)
+
+    try:
+        content = resolved.read_text(encoding=encoding)
+    except UnicodeDecodeError as exc:
+        raise WorkspaceSecurityError(
+            "The requested file is not valid text for the selected encoding"
+        ) from exc
+    except LookupError as exc:
+        raise ValueError(f"Unknown text encoding: {encoding}") from exc
+
+    return {
+        "path": resolved.relative_to(policy.root).as_posix(),
+        "content": content,
+        "size_bytes": resolved.stat().st_size,
+        "encoding": encoding,
+    }
