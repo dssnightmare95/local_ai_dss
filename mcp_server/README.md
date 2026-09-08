@@ -36,12 +36,15 @@ python -m local_ai_mcp.server
 It is normal for the command to appear idle. An MCP host must speak the
 protocol to it.
 
-## Current tool
+## Current tools
 
 - `ping(message?)`: returns the supplied message, or `pong` by default.
+- `workspace_info()`: returns the active workspace root and security limits.
+- `list_files(path?, recursive?, max_entries?)`: lists allowed workspace files
+  and directories using relative paths.
 
-The server deliberately does not read or modify workspace files yet. Those
-permissions will be added in separate steps.
+The current filesystem tools are read-only. They do not modify workspace files
+and skip protected paths.
 
 ## Workspace security policy
 

@@ -7,14 +7,15 @@ Keep stdout reserved for the MCP protocol; diagnostic messages belong in logs.
 from mcp.server import MCPServer
 
 from .security import WorkspacePolicy
+from .workspace import list_workspace_files, workspace_info as build_workspace_info
 
 
 mcp = MCPServer(
     "local-ai-mcp",
     version="0.1.0",
     instructions=(
-        "Local workspace MCP server. This initial version only exposes a "
-        "connectivity check; filesystem tools will be added incrementally."
+        "Local workspace MCP server. Read-only workspace inspection is "
+        "available; filesystem writes will require explicit future tools."
     ),
 )
 
@@ -28,6 +29,29 @@ def ping(message: str = "pong") -> str:
     """Confirm that the local MCP server is running."""
 
     return message
+
+
+@mcp.tool()
+def workspace_info() -> dict:
+    """Return the active workspace root and filesystem security limits."""
+
+    return build_workspace_info(workspace_policy)
+
+
+@mcp.tool()
+def list_files(
+    path: str = ".",
+    recursive: bool = False,
+    max_entries: int = 200,
+) -> list[dict]:
+    """List allowed files and directories using workspace-relative paths."""
+
+    return list_workspace_files(
+        workspace_policy,
+        path=path,
+        recursive=recursive,
+        max_entries=max_entries,
+    )
 
 
 def main() -> None:
